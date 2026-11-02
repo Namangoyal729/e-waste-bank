@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E-Waste Bank | Interactive Prototype</title>
+<style>
+:root{--green:#16845b;--dark:#183126;--mint:#ddf3e7;--bg:#f5f8f5;--muted:#6b7b70;--line:#e1e9e2;--orange:#e8994b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,Arial,sans-serif;color:var(--dark)}
+header{background:var(--dark);color:white;padding:18px 5vw;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.brand{font-size:20px;font-weight:800;letter-spacing:.4px}.brand span{color:#b9e07b}
+nav{display:flex;gap:8px;flex-wrap:wrap}nav button{background:transparent;border:1px solid #537060;color:white;padding:9px 12px;border-radius:20px;cursor:pointer}
+nav button.active,nav button:hover{background:var(--green);border-color:var(--green)}
+main{max-width:1120px;margin:28px auto;padding:0 20px}.screen{display:none}.screen.active{display:block}
+h1{font-size:clamp(28px,4vw,42px);margin:0 0 8px}h2{font-size:23px;margin:0 0 16px}p{color:var(--muted);line-height:1.55}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-top:22px}
+.card{background:white;border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 5px 18px #1831260a}
+.metric{font-size:32px;font-weight:800;color:var(--green);margin:8px 0}
+button.primary{background:var(--green);color:white;border:0;border-radius:12px;padding:12px 17px;font-weight:700;cursor:pointer}
+button.secondary{background:var(--mint);color:var(--green);border:0;border-radius:12px;padding:12px 17px;font-weight:700;cursor:pointer}
+button:disabled{opacity:.5;cursor:not-allowed}
+label{display:block;font-weight:700;font-size:13px;margin:13px 0 6px}
+input,select,textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:#fff;font:inherit}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.pill{display:inline-block;padding:6px 10px;background:var(--mint);color:var(--green);border-radius:30px;font-size:12px;font-weight:800}
+.timeline{border-left:3px solid var(--line);margin:18px 0 0 8px;padding-left:20px}
+.event{position:relative;padding:0 0 20px}.event:before{content:"";position:absolute;left:-28px;top:3px;width:12px;height:12px;border-radius:50%;background:#cbd8ce}
+.event.done:before{background:var(--green)}.event.current:before{background:var(--orange)}
+.small{font-size:12px;color:var(--muted)}.notice{background:#fff6e9;border:1px solid #f4dfc1;padding:12px;border-radius:12px;color:#79501f;font-size:13px}
+.preview{height:150px;border:2px dashed #b9d8c4;border-radius:14px;display:flex;align-items:center;justify-content:center;background:#f7fcf8;color:var(--green);text-align:center;overflow:hidden}
+.preview img{max-height:100%;max-width:100%;object-fit:contain}
+table{width:100%;border-collapse:collapse}td,th{text-align:left;padding:12px;border-bottom:1px solid var(--line);font-size:14px}th{color:var(--muted);font-size:12px}
+footer{text-align:center;color:var(--muted);padding:30px;font-size:12px}
+@media(max-width:620px){.row{grid-template-columns:1fr}header{align-items:flex-start}nav{width:100%}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">♻ E-WASTE <span>BANK</span></div>
+  <nav>
+    <button class="active" data-screen="home">Home</button>
+    <button data-screen="submit">Submit device</button>
+    <button data-screen="track">Track device</button>
+    <button data-screen="rewards">Rewards</button>
+    <button data-screen="admin">Admin</button>
+  </nav>
+</header>
+<main>
+<section id="home" class="screen active">
+  <span class="pill">HACKATHON MVP · DEMO DATA</span>
+  <h1>Your old electronics deserve a new beginning.</h1>
+  <p>Submit unused devices, get a suggested next step, and track their journey toward repair, reuse, donation or responsible recycling.</p>
+  <div class="grid">
+    <div class="card"><div class="small">YOUR GREEN COINS</div><div class="metric" id="coinHome">250</div><p>Points are awarded after collection verification.</p></div>
+    <div class="card"><div class="small">DEVICES SUBMITTED</div><div class="metric" id="deviceCount">5</div><p>Your registered device records.</p></div>
+    <div class="card"><div class="small">TRACKING ID</div><div class="metric" style="font-size:22px">EWB-2026-001</div><p>Follow a device from submission to destination.</p></div>
+  </div>
+  <div class="grid">
+    <div class="card"><h2>Ready to give a device a second life?</h2><p>Upload a photo and tell us a little about its condition.</p><button class="primary" onclick="show('submit')">＋ Submit e-waste</button></div>
+    <div class="card"><h2>Track a submission</h2><p>See the latest status of a device passport.</p><button class="secondary" onclick="show('track')">Track my device →</button></div>
+  </div>
+</section>
+<section id="submit" class="screen">
+  <span class="pill">STEP 1 · DEVICE SUBMISSION</span><h1>Submit an electronic device</h1>
+  <p>Provide basic details. AI assessment in this demo is illustrative and must be confirmed by a person.</p>
+  <div class="grid">
+    <div class="card">
+      <label>Upload device photo</label><input type="file" id="photo" accept="image/*">
+      <div class="preview" id="preview">📷<br>Choose a device image</div>
+      <label>Device category</label><select id="category"><option>Smartphone</option><option>Laptop</option><option>Tablet</option><option>Charger / Cable</option><option>Headphones</option><option>Keyboard / Mouse</option><option>Other electronics</option></select>
+      <div class="row">
+        <div><label>Brand / model</label><input id="model" placeholder="e.g. Samsung Galaxy"></div>
+        <div><label>Condition</label><select id="condition"><option value="working">Working</option><option value="repairable">Damaged / repairable</option><option value="notworking">Not working</option></select></div>
+      </div>
+      <label>Battery condition</label><select id="battery"><option value="unknown">Unknown / not sure</option><option value="normal">Appears normal</option><option value="swollen">Swollen, leaking or damaged</option></select>
+      <label>Pickup preference</label><select id="pickup"><option>Campus collection point</option><option>Doorstep pickup (demo)</option><option>Self drop-off</option></select>
+      <p class="notice">Do not place swollen, leaking or damaged batteries in ordinary collection bins. Flag them for specialist safety handling.</p>
+      <button class="primary" onclick="assess()">Assess device</button>
+    </div>
+    <div class="card">
+      <h2>Assessment result</h2><div id="assessment" class="notice">Your suggested route will appear here after you submit the details.</div>
+      <div id="submitResult" style="margin-top:14px"></div>
+    </div>
+  </div>
+</section>
+<section id="track" class="screen">
+  <span class="pill">DIGITAL E-WASTE PASSPORT</span><h1>Track your device</h1><p>Each submitted item receives a unique record ID. This prototype uses sample tracking data.</p>
+  <div class="grid">
+    <div class="card"><div class="small">DEVICE PASSPORT</div><h2 id="trackId">EWB-2026-001</h2><div class="pill" id="routePill">Repair assessment</div><p id="trackDesc">Smartphone · cracked screen reported · battery condition unknown.</p><div class="notice">QR code placeholder: in the deployed version, scan a QR code to open this device record.</div></div>
+    <div class="card"><h2>Journey timeline</h2><div class="timeline" id="timeline">
+      <div class="event done"><b>Submitted</b><div class="small">Device registered</div></div>
+      <div class="event done"><b>Collected</b><div class="small">Handover verified</div></div>
+      <div class="event done"><b>Inspection</b><div class="small">Initial check recorded</div></div>
+      <div class="event current"><b>Repair assessment</b><div class="small">Current stage</div></div>
+      <div class="event"><b>Final destination</b><div class="small">Awaiting confirmation</div></div>
+    </div></div>
+  </div>
+  <div style="margin-top:16px"><button class="secondary" onclick="advance()">Simulate next verified status</button> <span class="small">Demo control for presentation only</span></div>
+</section>
+<section id="rewards" class="screen">
+  <span class="pill">REWARD THE RIGHT ACTION</span><h1>Your Green Coins</h1><p>Points are credited only after a collection or contribution is verified by an administrator.</p>
+  <div class="grid">
+    <div class="card"><div class="small">AVAILABLE BALANCE</div><div class="metric" id="coinRewards">250</div><p>Illustrative demo balance</p></div>
+    <div class="card"><h2>How rewards work</h2><p>Phone submission: 50 coins<br>Laptop submission: 100 coins<br>Accessories: 10 coins<br>Verified donation: 30 bonus coins</p><span class="small">Demo values only; not cash or a real offer.</span></div>
+  </div>
+  <div class="card" style="margin-top:16px"><h2>Recent activity</h2><table><thead><tr><th>ACTIVITY</th><th>STATUS</th><th>POINTS</th></tr></thead><tbody id="rewardRows"><tr><td>Previous verified submissions</td><td><span class="pill">Verified</span></td><td>250</td></tr></tbody></table></div>
+</section>
+<section id="admin" class="screen">
+  <span class="pill">ADMIN VIEW · DEMO</span><h1>Collection overview</h1><p>Admin users verify handovers and update device status. This demo dashboard is not connected to a live recycler.</p>
+  <div class="grid">
+    <div class="card"><div class="small">REGISTERED DEVICES</div><div class="metric" id="adminCount">5</div></div>
+    <div class="card"><div class="small">PENDING INSPECTION</div><div class="metric">2</div></div>
+    <div class="card"><div class="small">VERIFIED HANDOVERS</div><div class="metric">3</div></div>
+  </div>
+  <div class="card" style="margin-top:16px"><h2>Device records</h2><table><thead><tr><th>ID</th><th>DEVICE</th><th>ROUTE</th><th>STATUS</th></tr></thead><tbody id="adminRows">
+    <tr><td>EWB-001</td><td>Smartphone</td><td>Repair review</td><td>In progress</td></tr>
+    <tr><td>EWB-002</td><td>Laptop</td><td>Reuse / donation</td><td>Collected</td></tr>
+    <tr><td>EWB-003</td><td>Headphones</td><td>Recycle review</td><td>Pending</td></tr>
+  </tbody></table></div>
+</section>
+</main>
+<footer>Prototype demonstration only · AI suggestions are not technical inspections · Actual handling requires appropriate authorised partners.</footer>
+<script>
+let coins=250, count=5, stage=3, newId="EWB-2026-006";
+const navButtons=[...document.querySelectorAll("nav button")];
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active",s.id===id));navButtons.forEach(b=>b.classList.toggle("active",b.dataset.screen===id));window.scrollTo(0,0)}
+navButtons.forEach(b=>b.addEventListener("click",()=>show(b.dataset.screen)));
+document.getElementById("photo").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const url=URL.createObjectURL(f);document.getElementById("preview").innerHTML=`<img src="${url}" alt="Uploaded device">`});
+function assess(){
+ const cat=document.getElementById("category").value, model=document.getElementById("model").value||"Unspecified model", cond=document.getElementById("condition").value, bat=document.getElementById("battery").value;
+ let route,why;
+ if(bat==="swollen"){route="Safety review";why="Battery is reported swollen, leaking or damaged. Keep it out of ordinary bins and refer it to a suitable specialist handler."}
+ else if(cond==="working"){route="Reuse / donation assessment";why="Device is reported working. Confirm data removal and inspect before reuse or donation."}
+ else if(cond==="repairable"){route="Repair assessment";why="Device is reported damaged. A qualified technician should assess repair feasibility and cost."}
+ else{route="Authorised recycling review";why="Device is reported non-functional. Verify condition and route through an appropriately authorised recycler."}
+ document.getElementById("assessment").innerHTML=`<b>Suggested route: ${route}</b><br>${why}<br><br><span class="small">AI/decision support demo: user input and physical verification are required.</span>`;
+ document.getElementById("submitResult").innerHTML=`<button class="primary" onclick="registerDevice('${cat.replace(/'/g,"")}','${model.replace(/'/g,"")}','${route.replace(/'/g,"")}')">Confirm and create device passport</button>`;
+}
+function registerDevice(cat,model,route){
+ count++;document.getElementById("deviceCount").textContent=count;document.getElementById("adminCount").textContent=count;
+ document.getElementById("trackId").textContent=newId;document.getElementById("routePill").textContent=route;
+ document.getElementById("trackDesc").textContent=cat+" · "+model+" · newly submitted";
+ document.getElementById("timeline").innerHTML='<div class="event done"><b>Submitted</b><div class="small">New device registered</div></div><div class="event current"><b>Collection pending</b><div class="small">Awaiting handover verification</div></div><div class="event"><b>Inspection</b><div class="small">Not started</div></div><div class="event"><b>Final destination</b><div class="small">Not confirmed</div></div>';
+ document.getElementById("adminRows").insertAdjacentHTML("afterbegin",`<tr><td>${newId}</td><td>${cat}</td><td>${route}</td><td>Submitted</td></tr>`);
+ document.getElementById("submitResult").innerHTML=`<div class="pill">Passport created</div><p><b>${newId}</b> has been registered. Rewards will be credited only after verified collection.</p><button class="secondary" onclick="show('track')">View device passport →</button>`;
+ show("track");newId="EWB-2026-"+String(count+1).padStart(3,"0");
+}
+function advance(){
+ const events=[...document.querySelectorAll("#timeline .event")];
+ if(stage<events.length-1){events[stage].classList.remove("current");events[stage].classList.add("done");stage++;events[stage].classList.add("current");}
+ else{alert("This demo record has reached its final displayed stage.");}
+ if(stage===1){coins+=50;document.getElementById("coinHome").textContent=coins;document.getElementById("coinRewards").textContent=coins;document.getElementById("rewardRows").insertAdjacentHTML("afterbegin",`<tr><td>Verified collection · ${document.getElementById("trackId").textContent}</td><td><span class="pill">Verified</span></td><td>+50</td></tr>`);}
+}
+</script>
+</body>
+</html>
